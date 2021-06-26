@@ -5,8 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.junio.coroutines.databinding.MainFragmentBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class MainFragment : Fragment() {
 
@@ -15,7 +17,9 @@ class MainFragment : Fragment() {
     }
 
     private lateinit var binding: MainFragmentBinding
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by viewModel {
+        parametersOf(findNavController())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,10 +32,6 @@ class MainFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel =
-            ViewModelProvider(this, MainViewModel.MainViewModelFactory(MainRepository())).get(
-                MainViewModel::class.java
-            )
 
         viewModel.moviesLiveData.observe(viewLifecycleOwner, { movies ->
             binding.tvMovies.text = movies[0].title
